@@ -5,10 +5,7 @@ import com.example.JwtPractice.domain.user.model.UserLoginRequest;
 import com.example.JwtPractice.domain.user.model.UserRegisterRequest;
 import com.example.JwtPractice.domain.user.model.UserRegisterResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -24,5 +21,10 @@ public class UserApiController {
     @PostMapping("/login")
     public Long login(@RequestBody UserLoginRequest request){
         return userRepository.login(request.getName(), request.getPassword());
+    }
+
+    @GetMapping("/me/{id}")
+    public UserRegisterResponse me(@PathVariable Long id){
+        return userRepository.me(id);
     }
 }

@@ -41,4 +41,19 @@ public class UserRepository {
         });
         return entity.get().getId();
     }
+
+    public UserRegisterResponse me(Long id) {
+        for (UserEntity entity : list) {
+            if (entity.getId() == id) {
+                return UserRegisterResponse.builder()
+                        .id(entity.getId())
+                        .name(entity.getName())
+                        .password(entity.getPassword())
+                        .email(entity.getEmail())
+                        .registerAt(entity.getRegisterAt())
+                        .build();
+            }
+        }
+        return null;
+    }
 }
