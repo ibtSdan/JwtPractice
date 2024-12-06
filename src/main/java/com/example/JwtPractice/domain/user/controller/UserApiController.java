@@ -1,6 +1,7 @@
-package com.example.JwtPractice.controller;
+package com.example.JwtPractice.domain.user.controller;
 
-import com.example.JwtPractice.db.UserRepository;
+import com.example.JwtPractice.domain.user.db.UserRepository;
+import com.example.JwtPractice.domain.user.model.UserLoginRequest;
 import com.example.JwtPractice.domain.user.model.UserRegisterRequest;
 import com.example.JwtPractice.domain.user.model.UserRegisterResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,10 @@ public class UserApiController {
     @PostMapping("/register")
     public UserRegisterResponse register(@RequestBody UserRegisterRequest request){
         return userRepository.register(request);
+    }
+
+    @PostMapping("/login")
+    public Long login(@RequestBody UserLoginRequest request){
+        return userRepository.login(request.getName(), request.getPassword());
     }
 }

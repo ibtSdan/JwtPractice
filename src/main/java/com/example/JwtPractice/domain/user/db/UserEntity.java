@@ -1,4 +1,4 @@
-package com.example.JwtPractice.db;
+package com.example.JwtPractice.domain.user.db;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserEntity {
+    private Long id;
     private String name;
     private String password;
     private String email;

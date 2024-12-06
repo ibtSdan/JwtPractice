@@ -7,17 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserRegisterResponse {
-    private Long id;
+public class UserLoginRequest {
     private String name;
+
     private String password;
-    private String email;
-    private LocalDateTime registerAt;
 }
