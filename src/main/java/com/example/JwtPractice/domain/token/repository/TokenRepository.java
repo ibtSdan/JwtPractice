@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
     Boolean existsByUserId(Long userId);
+
+    Optional<TokenEntity> findByRefreshToken(String token);
 }

@@ -45,8 +45,8 @@ public class UserService {
         if(!(entity.getPassword().equals(password))){
             throw new RuntimeException("비밀번호가 다릅니다.");
         }
-        var accessToken = tokenService.issueAccessToken(entity);
-        var refreshToken = tokenService.issueRefreshToken(entity);
+        var accessToken = tokenService.issueAccessToken(entity.getId());
+        var refreshToken = tokenService.issueRefreshToken(entity.getId());
 
         return TokenResponse.builder()
                 .accessToken(accessToken.getToken())
