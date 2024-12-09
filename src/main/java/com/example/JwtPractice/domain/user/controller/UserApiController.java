@@ -2,13 +2,11 @@ package com.example.JwtPractice.domain.user.controller;
 
 import com.example.JwtPractice.domain.token.model.TokenResponse;
 import com.example.JwtPractice.domain.user.model.LoginRequest;
+import com.example.JwtPractice.domain.user.model.MeResponse;
 import com.example.JwtPractice.domain.user.model.RegisterRequest;
 import com.example.JwtPractice.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +28,8 @@ public class UserApiController {
 
 
     // me
+    @GetMapping("/me")
+    public MeResponse me(){
+        return userService.me();
+    }
 }

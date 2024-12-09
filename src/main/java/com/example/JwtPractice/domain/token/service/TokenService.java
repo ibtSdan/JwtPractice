@@ -24,4 +24,9 @@ public class TokenService {
         map.put("userId",user.getId());
         return tokenHelper.issueRefreshToken(map);
     }
+
+    public Long validationToken(String token){
+        var map = tokenHelper.validationToken(token);
+        return Long.parseLong(map.get("userId").toString());
+    }
 }

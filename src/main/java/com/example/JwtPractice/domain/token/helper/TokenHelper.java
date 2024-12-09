@@ -3,8 +3,10 @@ package com.example.JwtPractice.domain.token.helper;
 import com.example.JwtPractice.domain.token.model.TokenDto;
 import com.example.JwtPractice.domain.token.repository.TokenEntity;
 import com.example.JwtPractice.domain.token.repository.TokenRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -76,6 +79,22 @@ public class TokenHelper {
     }
 
     public Map<String, Object> validationToken(String token){
-        return null;
+        var key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        var parser = Jwts.parser()
+                .setSigningKey(key)
+                .build();
+
+        try{
+            var result = parser.parseClaimsJws(token);
+            return new HashMap<String, Object>(result.getPayload());
+        } catch (Exception e){
+            if(e instanceof SignatureException){
+                throw new RuntimeException("유효하지 않은 토큰");
+            } else if(e instanceof ExpiredJwtException){
+                throw new RuntimeException("만료된 토큰");
+            } else {
+                throw new RuntimeException("토큰 에러");
+            }
+        }
     }
 }

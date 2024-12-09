@@ -1,4 +1,4 @@
-package com.example.JwtPractice.config;
+package com.example.JwtPractice.config.swagger;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

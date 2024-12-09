@@ -4,13 +4,17 @@ import com.example.JwtPractice.domain.token.model.TokenDto;
 import com.example.JwtPractice.domain.token.model.TokenResponse;
 import com.example.JwtPractice.domain.token.service.TokenService;
 import com.example.JwtPractice.domain.user.model.LoginRequest;
+import com.example.JwtPractice.domain.user.model.MeResponse;
 import com.example.JwtPractice.domain.user.model.RegisterRequest;
 import com.example.JwtPractice.domain.user.repository.UserEntity;
 import com.example.JwtPractice.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -54,4 +58,14 @@ public class UserService {
     }
 
 
+    public MeResponse me() {
+        var requestContext = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
+        var userId = requestContext.getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
+        var entity = userRepository.findById(Long.parseLong(userId.toString())).get();
+        return MeResponse.builder()
+                .name(entity.getName())
+                .status(entity.getStatus())
+                .registeredAt(entity.getRegisteredAt())
+                .build();
+    }
 }
