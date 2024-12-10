@@ -6,4 +6,4 @@
 
 24.12.9
 
-추가 예정: password 암호화 (security)
+추가 예정: password 암호화 (security) -> 12.10 완료
