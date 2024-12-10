@@ -35,7 +35,8 @@ public class SecurityConfig {
                                     "/api/user/register",
                                     "/api/user/login",
                                     "/api/token/refresh",
-                                    "/h2-console/**").permitAll()
+                                    "/h2-console/**",
+                                    "/api/token/refresh/{token}").permitAll()
                             //.requestMatchers("/api/user/me").hasAuthority("ROLE_USER")
                             .anyRequest().authenticated()
                             .and()
