@@ -12,7 +12,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.Objects;
 
-@Slf4j
+// 인터셉트 주석 처리
+/*@Slf4j
 @RequiredArgsConstructor
 @Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
@@ -26,4 +27,4 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         requestContext.setAttribute("userId",userId, RequestAttributes.SCOPE_REQUEST);
         return true;
     }
-}
+}*/

@@ -3,12 +3,19 @@ package com.example.JwtPractice.domain.user.service;
 import com.example.JwtPractice.domain.token.model.TokenDto;
 import com.example.JwtPractice.domain.token.model.TokenResponse;
 import com.example.JwtPractice.domain.token.service.TokenService;
+import com.example.JwtPractice.domain.user.model.CustomUserDetails;
 import com.example.JwtPractice.domain.user.model.LoginRequest;
 import com.example.JwtPractice.domain.user.model.MeResponse;
 import com.example.JwtPractice.domain.user.model.RegisterRequest;
 import com.example.JwtPractice.domain.user.repository.UserEntity;
 import com.example.JwtPractice.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -22,31 +29,42 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public String register(RegisterRequest registerRequest) {
+        // 암호화
+        var encodePw = passwordEncoder.encode(registerRequest.getPassword());
+
         var entity = UserEntity.builder()
                 .name(registerRequest.getName())
-                .password(registerRequest.getPassword())
+                .password(encodePw)
                 .status("REGISTERED")
                 .registeredAt(LocalDateTime.now())
                 .build();
         userRepository.save(entity);
         return "등록완료";
-
     }
 
 
 
     public TokenResponse login(LoginRequest loginRequest){
-        String name = loginRequest.getName();
-        String password = loginRequest.getPassword();
-        var entity = userRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("해당하는 사용자가 존재하지 않습니다."));
-        if(!(entity.getPassword().equals(password))){
-            throw new RuntimeException("비밀번호가 다릅니다.");
-        }
-        var accessToken = tokenService.issueAccessToken(entity.getId());
-        var refreshToken = tokenService.issueRefreshToken(entity.getId());
+        // 인증에 성공하면 자동으로 user 정보 갱신해줌. 그래서 UsernamePasswordAuthenticationToken 사용
+        var authenticationToken = new UsernamePasswordAuthenticationToken(
+                loginRequest.getName(), loginRequest.getPassword()
+        );
+
+        // authenticationManager 가 호출되면, 자동으로 authenticationProvider 호출
+        // Provider 에서 설정된 UserDetailsService로 해당하는 user를 db에서 가져온다
+        // 가져온 user를 match로 검증
+        // 성공하면 authentication 객체 반환
+        var authentication = authenticationManager.authenticate(authenticationToken);
+
+        var user = (CustomUserDetails) authentication.getPrincipal();
+        var userId = Long.parseLong(user.getUserId().toString());
+
+        var accessToken = tokenService.issueAccessToken(userId);
+        var refreshToken = tokenService.issueRefreshToken(userId);
 
         return TokenResponse.builder()
                 .accessToken(accessToken.getToken())
@@ -57,11 +75,15 @@ public class UserService {
 
     }
 
-
     public MeResponse me() {
-        var requestContext = Objects.requireNonNull(RequestContextHolder.getRequestAttributes());
-        var userId = requestContext.getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
-        var entity = userRepository.findById(Long.parseLong(userId.toString())).get();
+        System.out.println("context 저장완료..."+SecurityContextHolder.getContext().getAuthentication());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null){
+            throw new RuntimeException("인증 비어ㅣㅇㅆ드");
+        }
+        var userId = (Long) authentication.getPrincipal();
+        var entity = userRepository.findById(userId).get();
+
         return MeResponse.builder()
                 .name(entity.getName())
                 .status(entity.getStatus())
