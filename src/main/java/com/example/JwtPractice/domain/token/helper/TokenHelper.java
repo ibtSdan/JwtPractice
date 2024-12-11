@@ -61,7 +61,7 @@ public class TokenHelper {
         var userId = Long.parseLong(data.get("userId").toString());
 
         if(tokenRepository.existsByUserId(userId)){
-            var entity = tokenRepository.findById(userId).get();
+            var entity = tokenRepository.findByUserId(userId).get();
             entity.setRefreshToken(jwtToken);
             tokenRepository.save(entity);
         } else{
