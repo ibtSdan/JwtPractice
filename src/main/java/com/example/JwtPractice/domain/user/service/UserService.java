@@ -41,6 +41,7 @@ public class UserService {
                 .password(encodePw)
                 .status("REGISTERED")
                 .registeredAt(LocalDateTime.now())
+                .role("ROLE_USER")
                 .build();
         userRepository.save(entity);
         return "등록완료";
@@ -62,9 +63,10 @@ public class UserService {
 
         var user = (CustomUserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(user.getUserId().toString());
+        var authorities = user.getAuthorities();
 
-        var accessToken = tokenService.issueAccessToken(userId);
-        var refreshToken = tokenService.issueRefreshToken(userId);
+        var accessToken = tokenService.issueAccessToken(userId, authorities);
+        var refreshToken = tokenService.issueRefreshToken(userId, authorities);
 
         return TokenResponse.builder()
                 .accessToken(accessToken.getToken())
@@ -75,19 +77,15 @@ public class UserService {
 
     }
 
-    public MeResponse me() {
-        System.out.println("context 저장완료..."+SecurityContextHolder.getContext().getAuthentication());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null){
-            throw new RuntimeException("인증 비어ㅣㅇㅆ드");
-        }
-        var userId = (Long) authentication.getPrincipal();
-        var entity = userRepository.findById(userId).get();
+    public String me() {
+        var requestContext = SecurityContextHolder.getContext().getAuthentication();
+        var userId = Long.parseLong(requestContext.getPrincipal().toString());
+        return "me: "+userId;
+    }
 
-        return MeResponse.builder()
-                .name(entity.getName())
-                .status(entity.getStatus())
-                .registeredAt(entity.getRegisteredAt())
-                .build();
+    public String admin() {
+        var requestContext = SecurityContextHolder.getContext().getAuthentication();
+        var userId = Long.parseLong(requestContext.getPrincipal().toString());
+        return "어드민: "+userId;
     }
 }

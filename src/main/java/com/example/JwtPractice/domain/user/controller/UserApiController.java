@@ -29,7 +29,12 @@ public class UserApiController {
 
     // me
     @GetMapping("/me")
-    public MeResponse me(){
+    public String me(){
         return userService.me();
+    }
+
+    @GetMapping("/admin")
+    public String admin(){
+        return userService.admin();
     }
 }

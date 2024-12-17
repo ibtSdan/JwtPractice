@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 public class TokenController {
     private final TokenService tokenService;
 
+
+    // Post로 하는 것이 일반적
     @GetMapping("/refresh/{token}")
     public TokenDto reissueRefreshToken(@PathVariable String token){
         return tokenService.reissueRefreshToken(token);

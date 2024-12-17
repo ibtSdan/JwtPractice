@@ -37,7 +37,7 @@ public class SecurityConfig {
                                     "/api/token/refresh",
                                     "/h2-console/**",
                                     "/api/token/refresh/{token}").permitAll()
-                            //.requestMatchers("/api/user/me").hasAuthority("ROLE_USER")
+                            .requestMatchers("/api/user/admin").hasAuthority("ROLE_ADMIN")
                             .anyRequest().authenticated()
                             .and()
                             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

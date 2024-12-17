@@ -59,6 +59,8 @@ public class TokenHelper {
                 .compact();
 
         var userId = Long.parseLong(data.get("userId").toString());
+        var authorities = data.get("authorities").toString();
+        authorities = authorities.substring(1,authorities.length()-1);
 
         if(tokenRepository.existsByUserId(userId)){
             var entity = tokenRepository.findByUserId(userId).get();
@@ -68,6 +70,7 @@ public class TokenHelper {
             var entity = TokenEntity.builder()
                     .refreshToken(jwtToken)
                     .userId(userId)
+                    .role(authorities)
                     .build();
             tokenRepository.save(entity);
         }

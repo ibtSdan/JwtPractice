@@ -2,8 +2,10 @@ package com.example.JwtPractice.domain.user.model;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -14,13 +16,13 @@ public class CustomUserDetails implements UserDetails {
 
     private final String encodePw;
 
-    private final Collection<? extends GrantedAuthority> authorities;
+    private final String role;
 
-    public CustomUserDetails(Long userId, String username, String encodePw, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(Long userId, String username, String encodePw, String role) {
         this.userId = userId;
         this.username = username;
         this.encodePw = encodePw;
-        this.authorities = authorities;
+        this.role = role;
     }
 
     public Long getUserId() {
@@ -34,6 +36,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        for(String role : role.split(",")){
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
         return authorities;
     }
 

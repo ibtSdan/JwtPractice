@@ -21,4 +21,6 @@ public class TokenEntity {
     private String refreshToken;
 
     private Long userId;
+
+    private String role;
 }

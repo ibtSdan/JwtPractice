@@ -27,4 +27,6 @@ public class UserEntity {
     private LocalDateTime registeredAt;
 
     private String status;
+
+    private String role;
 }
